@@ -1,68 +1,109 @@
-"use client";
+"use client"
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
 import { useState } from "react"; 
 import { useRouter } from "next/navigation";
 import { signUp } from "@/lib/betterauth/auth-client";
 
-export default function SignUpPage() {
-    const router = useRouter(); 
-    const [error, setError] = useState<string | null>(null);
+export default function SignupForm() {
+  const router = useRouter(); 
+  const [error, setError] = useState<string | null>(null);
+  
+      async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+          e.preventDefault(); 
+          setError(null); 
+          
+          const formData = new FormData(e.currentTarget); 
 
-    async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
-        e.preventDefault(); 
-        setError(null); 
-        
-        const formData = new FormData(e.currentTarget); 
-        
-        const res = await signUp.email({
-            name: formData.get("name") as string, 
-            email: formData.get("email") as string, 
-            password: formData.get("password") as string, 
-        }); 
-        
-        if (res.error) {
-            setError(res.error.message || "Something went wrong."); 
-        } else {
-            router.push("/dashboard"); 
-        } 
-    } 
-
-    return (
-        <main className="max-w-md mx-auto p-6 space-y-4 text-white">
-            <h1 className="text-2xl font-bold">Sign Up</h1>
-            
-            {error && (<p className="text-red-500">{error}</p>)}
-            
-            <form onSubmit={handleSubmit} className="space-y-4">
-                {" "}
-                <input
-                    name="name"
-                    placeholder="Full Name"
-                    required
-                    className="w-full rounded-md bg-neutral-900 border border-neutral-700 px-3 py-2"
-                />{" "}
-                <input
-                    name="email"
-                    type="email"
-                    placeholder="Email"
-                    required
-                    className="w-full rounded-md bg-neutral-900 border border-neutral-700 px-3 py-2"
-                />{" "}
-                <input
-                    name="password"
-                    type="password"
-                    placeholder="Password"
-                    required
-                    minLength={8} 
-                    className="w-full rounded-md bg-neutral-900 border border-neutral-700 px-3 py-2"
-                />{" "}
-                <button
-                    type="submit"
-                    className="w-full bg-white text-black font-medium rounded-md px-4 py-2 hover:bg-gray-200"
-                >
-                {" "}
-                Create Account
-                </button>{" "}
-            </form>{" "}
-        </main>
-    );
+          if (formData.get("password") !== formData.get("confirm-password")) {
+              setError("Passwords do not match."); 
+              return; 
+          }
+          
+          const res = await signUp.email({
+              name: formData.get("name") as string, 
+              email: formData.get("email") as string, 
+              password: formData.get("password") as string, 
+          }); 
+          
+          if (res.error) {
+              setError(res.error.message || "Something went wrong."); 
+          } else {
+              router.push("/dashboard"); 
+          } 
+      }
+  return (
+    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+    <div className="w-full max-w-sm">
+    <Card>
+      <CardHeader>
+        <CardTitle>Create an account</CardTitle>
+        <CardDescription>
+          Enter your information below to create your account
+          {error && (<p className="text-red-500">{error}</p>)}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit}>
+          <FieldGroup>
+            <Field>
+              <FieldLabel htmlFor="name">Full Name</FieldLabel>
+              <Input id="name" name="name" type="text" placeholder="John Doe" required />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="email">Email</FieldLabel>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="m@example.com"
+                required
+              />
+              <FieldDescription>
+                We&apos;ll use this to contact you. We will not share your email
+                with anyone else.
+              </FieldDescription>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="password">Password</FieldLabel>
+              <Input id="password" name="password" type="password" required />
+              <FieldDescription>
+                Must be at least 8 characters long.
+              </FieldDescription>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="confirm-password">
+                Confirm Password
+              </FieldLabel>
+              <Input id="confirm-password" name="confirm-password" type="password" required />
+              <FieldDescription>Please confirm your password.</FieldDescription>
+            </Field>
+            <FieldGroup>
+              <Field>
+                <Button type="submit">Create Account</Button>
+                <FieldDescription className="px-6 text-center">
+                  Already have an account? <a href="/login">Sign in</a>
+                </FieldDescription>
+              </Field>
+            </FieldGroup>
+          </FieldGroup>
+        </form>
+      </CardContent>
+    </Card>
+    </div>
+    </div>
+  )
 }
