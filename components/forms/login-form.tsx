@@ -1,4 +1,5 @@
-import { cn } from "cn"
+"use client";
+import { cn } from "@/lib/shadcn/utils"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -16,12 +17,30 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+import { useState } from "react"; 
+import { useRouter } from "next/navigation";
+import { signIn } from "@/lib/betterauth/auth-client";
+
+export function LoginForm() {
+  const router = useRouter(); 
+      const [error, setError] = useState<string | null>(null); 
+      
+      async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+          e.preventDefault(); 
+          setError(null); 
+          const formData = new FormData(e.currentTarget); 
+          const res = await signIn.email({
+              email: formData.get("email") as string, 
+              password: formData.get("password") as string, 
+          }); 
+          if (res.error) {
+              setError(res.error.message || "Something went wrong."); 
+          } else {
+              router.push("/dashboard"); 
+          } 
+      }
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("flex flex-col gap-6")}>
       <Card>
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
@@ -30,12 +49,13 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="m@example.com"
                   required
@@ -51,15 +71,12 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input id="password" name="password" type="password" required />
               </Field>
               <Field>
                 <Button type="submit">Login</Button>
-                <Button variant="outline" type="button">
-                  Login with Google
-                </Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="#">Sign up</a>
+                  Don&apos;t have an account? <a href="/register">Sign up</a>
                 </FieldDescription>
               </Field>
             </FieldGroup>

@@ -1,3 +1,4 @@
+"use client"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -13,27 +14,58 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { useState } from "react"; 
+import { useRouter } from "next/navigation";
+import { signUp } from "@/lib/betterauth/auth-client";
 
-export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
+export function SignupForm() {
+  const router = useRouter(); 
+  const [error, setError] = useState<string | null>(null);
+  
+      async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+          e.preventDefault(); 
+          setError(null); 
+          
+          const formData = new FormData(e.currentTarget); 
+
+          if (formData.get("password") !== formData.get("confirm-password")) {
+              setError("Passwords do not match."); 
+              return; 
+          }
+          
+          const res = await signUp.email({
+              name: formData.get("name") as string, 
+              email: formData.get("email") as string, 
+              password: formData.get("password") as string, 
+          }); 
+          
+          if (res.error) {
+              setError(res.error.message || "Something went wrong."); 
+          } else {
+              router.push("/dashboard"); 
+          } 
+      }
   return (
-    <Card {...props}>
+    <Card>
       <CardHeader>
         <CardTitle>Create an account</CardTitle>
         <CardDescription>
           Enter your information below to create your account
+          {error && (<p className="text-red-500">{error}</p>)}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form>
+        <form onSubmit={handleSubmit}>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="name">Full Name</FieldLabel>
-              <Input id="name" type="text" placeholder="John Doe" required />
+              <Input id="name" name="name" type="text" placeholder="John Doe" required />
             </Field>
             <Field>
               <FieldLabel htmlFor="email">Email</FieldLabel>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="m@example.com"
                 required
@@ -45,7 +77,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
             </Field>
             <Field>
               <FieldLabel htmlFor="password">Password</FieldLabel>
-              <Input id="password" type="password" required />
+              <Input id="password" name="password" type="password" required />
               <FieldDescription>
                 Must be at least 8 characters long.
               </FieldDescription>
@@ -54,17 +86,14 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               <FieldLabel htmlFor="confirm-password">
                 Confirm Password
               </FieldLabel>
-              <Input id="confirm-password" type="password" required />
+              <Input id="confirm-password" name="confirm-password" type="password" required />
               <FieldDescription>Please confirm your password.</FieldDescription>
             </Field>
             <FieldGroup>
               <Field>
                 <Button type="submit">Create Account</Button>
-                <Button variant="outline" type="button">
-                  Sign up with Google
-                </Button>
                 <FieldDescription className="px-6 text-center">
-                  Already have an account? <a href="#">Sign in</a>
+                  Already have an account? <a href="/login">Sign in</a>
                 </FieldDescription>
               </Field>
             </FieldGroup>
