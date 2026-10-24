@@ -21,7 +21,7 @@ const data = {
   user: {
     name: "shadcn",
     email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    avatar: "/file.svg",
   },
   navMain: [
     {
@@ -175,7 +175,17 @@ const data = {
     },
   ],
 }
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+type AppSideBarProps = React.ComponentProps<typeof Sidebar> & {
+  user: {
+    name: string
+    email: string
+    avatar?: string
+  }
+}
+export function AppSidebar({ ...props }: AppSideBarProps) {
+  data.user.name = props.user?.name || data.user.name
+  data.user.email = props.user?.email || data.user.email
+  data.user.avatar = props.user?.avatar || data.user.avatar
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
