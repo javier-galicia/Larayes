@@ -1,5 +1,5 @@
 "use client"
-
+import { useRouter } from "next/navigation";
 import {
   Avatar,
   AvatarFallback,
@@ -32,6 +32,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const router = useRouter();
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -94,9 +95,16 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => signOut()}>
-              <SignOutIcon
-              />
+            <DropdownMenuItem onClick={ () => signOut({
+                  fetchOptions: {
+                    onSuccess: () => {
+                      router.replace("/login"); // redirect to login page
+                    },
+                  },
+                })
+              }
+            >
+              <SignOutIcon />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
