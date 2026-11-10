@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/forms/login-form";
-import { auth } from "@/lib/betterauth/auth-server";
+import { auth } from "@/lib/betterauth/auth";
 
 export default async function LoginPage() {
   const session = await auth.api.getSession({

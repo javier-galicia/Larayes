@@ -6,5 +6,7 @@ allowBuilds:
 permissions:
   '@prisma/orm-mongo':
     skills: false
+  '@tanstack/react-table':
+    skills: true
   prisma:
     skills: false
