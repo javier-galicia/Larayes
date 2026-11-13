@@ -8,6 +8,7 @@ import { type DataTableFeatures } from "./data-table-features"
 // You can use a Zod schema here if you want.
 
 export type RandomDocs = {
+   // id: String
     header: string
     type: string
     status: string
@@ -19,6 +20,9 @@ export type RandomDocs = {
 const columnHelper = createColumnHelper<DataTableFeatures, RandomDocs>()
 
 export const columns = columnHelper.columns([
+    /*columnHelper.accessor("id", {
+        header: "ID",
+    }),*/
     columnHelper.accessor("status", {
         header: "Status",
     }),

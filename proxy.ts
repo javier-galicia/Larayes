@@ -15,7 +15,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/prueba",
-    //    "/api/randomdocs",
-    ] // Specify the routes the middleware applies to
+    matcher: [
+        "/prueba",
+    ]
 };
