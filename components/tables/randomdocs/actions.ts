@@ -5,12 +5,12 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const randomDocSchema = z.object({
-    header: z.string().max(100),
-    type: z.string().max(50).min(5),
-    status: z.string().max(50),
-    target: z.number().int().optional(),
-    limit: z.number().int().optional(),
-    reviewer: z.string().max(100),
+	header: z.string().max(100),
+	type: z.string().max(50).min(5),
+	status: z.string().max(50),
+	target: z.number().int().optional(),
+	limit: z.number().int().optional(),
+	reviewer: z.string().max(100),
 });
 
 /*function optionalNumber(value: FormDataEntryValue | null) {
@@ -43,23 +43,26 @@ export async function getDataRandomDocs() {
 	}
 }
 
-export async function addRandomDoc(formData: FormData) {
-	const data = randomDocSchema.parse({
-		header: String(formData.get("header") ?? ""),
-		type: String(formData.get("type") ?? ""),
-		status: String(formData.get("status") ?? ""),
-		target: formData.get("target") ? Number(formData.get("target")) : undefined,
-		limit: formData.get("limit") ? Number(formData.get("limit")) : undefined,
-		reviewer: String(formData.get("reviewer") ?? ""),
-	});
-
+export async function addRandomDoc(prevState: any, formData: FormData) {
 	try {
+		const data = randomDocSchema.parse({
+			header: String(formData.get("header") ?? ""),
+			type: String(formData.get("type") ?? ""),
+			status: String(formData.get("status") ?? ""),
+			target: formData.get("target")
+				? Number(formData.get("target"))
+				: undefined,
+			limit: formData.get("limit") ? Number(formData.get("limit")) : undefined,
+			reviewer: String(formData.get("reviewer") ?? ""),
+		});
+
 		const client = await clientPromise;
 		await client.db("example_prisma").collection("randomdocs").insertOne(data);
+		return { message: "successful" };
+		
 	} catch (error) {
-		console.error("Error inserting document:", error);
-		throw error;
+		return { message: "Failed to create" };
 	}
-	revalidatePath("/prueba");
-	redirect("/prueba");
+	//return revalidatePath("/prueba");
+	//return redirect("/prueba");
 }
