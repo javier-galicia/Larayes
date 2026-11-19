@@ -1,6 +1,10 @@
 "use client";
 import { useActionState, useEffect } from "react";
 import { addRandomDoc } from "../tables/randomdocs/actions";
+import { FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "../ui/card";
 
 const initialState = {
 	message: "",
@@ -23,18 +27,41 @@ function AddRandomDocs({ onAdd }: AddRandomDocsProps) {
 	}, [state]);
 
 	return (
-		<form action={formAction}>
-			<input type="text" name="header" placeholder="Header" />
-			<input type="text" name="type" placeholder="Type" />
-			<input type="text" name="status" placeholder="Status" />
-			<input type="number" name="target" placeholder="Target" />
-			<input type="number" name="limit" placeholder="Limit" />
-			<input type="text" name="reviewer" placeholder="Reviewer" />
-			<button type="submit" disabled={isPending}>
-				{isPending ? "Guardando..." : "Add Random Doc"}
-			</button>
-			{state?.message}
-		</form>
+		<Card>
+			<CardContent>
+				<form action={formAction}>
+					<FieldGroup>
+						<FieldLabel htmlFor="header">Header</FieldLabel>
+						<Input id="header" name="header" type="text" placeholder="Header" />
+						<FieldLabel htmlFor="type">Type</FieldLabel>
+						<Input id="type" name="type" type="text" placeholder="Type" />
+						<FieldLabel htmlFor="status">Status</FieldLabel>
+						<Input id="status" name="status" type="text" placeholder="Status" />
+						<FieldLabel htmlFor="target">Target</FieldLabel>
+						<Input
+							id="target"
+							name="target"
+							type="number"
+							placeholder="Target"
+						/>
+						<FieldLabel htmlFor="limit">Limit</FieldLabel>
+						<Input id="limit" name="limit" type="number" placeholder="Limit" />
+						<FieldLabel htmlFor="reviewer">Reviewer</FieldLabel>
+						<Input
+							id="reviewer"
+							name="reviewer"
+							type="text"
+							placeholder="Reviewer"
+						/>
+						<Button type="submit">
+							{isPending ? "Guardando..." : "Add Random Doc"}
+						</Button>
+					</FieldGroup>
+
+					{state?.message}
+				</form>
+			</CardContent>
+		</Card>
 	);
 }
 
