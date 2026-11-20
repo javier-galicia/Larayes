@@ -20,12 +20,9 @@ export default function DemoPage() {
 
 	return (
 		<>
-			<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-				<div className="col">
-					<AddRandomDocs onAdd={refreshData} />
-				</div>
-
-				<div className="col">
+			<div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
+				<AddRandomDocs onAdd={refreshData} />
+				<div className="min-w-0 overflow-x-auto">
 					<DataTable columns={columns} data={data} />
 				</div>
 			</div>
